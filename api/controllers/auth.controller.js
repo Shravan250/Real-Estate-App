@@ -69,7 +69,7 @@ export const login = async (req,res) =>{
         httpOnly: true,
         // secure: true,
         maxAge: age
-      }).status(200).json({ message: "Login Successful" });
+      }).status(200).json(userInfo);
 
     } catch (error) {
       console.error('Error during user registration:', error); // Log the error for debugging
