@@ -1,9 +1,9 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import Chat from "../../components/chat/Chat";
 import List from "../../components/list/List";
 import apiRequest from "../../lib/apiRequest";
 import "./profilePage.scss";
-import { useNavigate } from "react-router-dom";
+import { Link , useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 function ProfilePage() {
@@ -11,12 +11,6 @@ function ProfilePage() {
   const { updateUser , currentUser } = useContext(AuthContext);
 
   const navigate = useNavigate(); 
-
-  useEffect(()=>{
-    if(!currentUser) {
-      navigate("/login");
-    }
-  } , [currentUser , navigate]);
 
   const handleLogout = async () =>{
     try{
@@ -29,13 +23,14 @@ function ProfilePage() {
   }
 
   return (
-    currentUser &&
     <div className="profilePage">
       <div className="details">
         <div className="wrapper">
           <div className="title">
             <h1>User Information</h1>
-            <button>Update Profile</button>
+            <Link to="/profile/update">
+              <button>Update Profile</button>
+            </Link>
           </div>
           <div className="info">
             <span>
