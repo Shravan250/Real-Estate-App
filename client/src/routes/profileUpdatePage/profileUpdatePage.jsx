@@ -1,37 +1,34 @@
 import { useContext, useState } from "react";
 import "./profileUpdatePage.scss";
 import { AuthContext } from "../../context/AuthContext";
-import apiRequest from "../../lib/apiRequest.js"
+import apiRequest from "../../lib/apiRequest.js";
 import UploadWidget from "../../components/uploadWeight/UploadWeight.jsx";
 
 function ProfileUpdatePage() {
+  const { currentUser, updateUser } = useContext(AuthContext);
+  const [error, setError] = useState("");
+  const [avatar, setAvatar] = useState([]);
 
-  const {currentUser ,updateUser} = useContext(AuthContext);
-  const [error , setError] = useState("");
-  const [avatar , setAvatar] = useState(currentUser.avatar);
-
-  const handleSubmit = async (e) =>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
 
-    const { username , email , password } = Object.fromEntries(formData);
+    const { username, email, password } = Object.fromEntries(formData);
 
-    try{
-      const res = await apiRequest.put(`/users/${currentUser.id}`,{
+    try {
+      const res = await apiRequest.put(`/users/${currentUser.id}`, {
         username,
         email,
         password,
-        avatar,
+        avatar: avatar[0],
       });
       console.log(res.data);
       updateUser(res.data);
-      
-
-    }catch(err){
+    } catch (err) {
       console.log(err);
       setError(err.response.data.message);
     }
-  }
+  };
 
   return (
     <div className="profileUpdatePage">
@@ -65,8 +62,8 @@ function ProfileUpdatePage() {
         </form>
       </div>
       <div className="sideContainer">
-        <img src={avatar || "/noavatar.jpg"} alt="" className="avatar" />
-        <UploadWidget 
+        <img src={avatar[0] || currentUser.avatar || "/noavatar.jpg"} alt="" className="avatar" />
+        <UploadWidget
           uwConfig={{
             cloudName: "cloudinaryenv1",
             uploadPreset: "estate",
@@ -74,7 +71,7 @@ function ProfileUpdatePage() {
             maxImageFileSize: 2000000,
             folder: "avatars",
           }}
-          setAvatar = {setAvatar}
+          setAvatar={setAvatar}
         />
       </div>
     </div>
