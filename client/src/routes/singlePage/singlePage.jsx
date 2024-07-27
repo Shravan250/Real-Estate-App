@@ -23,8 +23,8 @@ function SinglePage() {
                 <div className="price">$ {post.price}</div>
               </div>
               <div className="user">
-                <img src={post.user.img} alt="" />
-                <span>{post.user.name}</span>
+                <img src={post.user.avatar} alt="" />
+                <span>{post.user.username}</span>
               </div>
             </div>
             <div
@@ -45,7 +45,8 @@ function SinglePage() {
               <div className="featureText">
                 <span>Utilities</span>
                 {post.postDetail.utilities === "owner" ? (
-                  <p>Owner is responsible</p> ):(
+                  <p>Owner is responsible</p>
+                ) : (
                   <p>Tenant is responsible</p>
                 )}
               </div>
@@ -94,7 +95,8 @@ function SinglePage() {
                   {post.postDetail.school > 999
                     ? post.postDetail.school / 1000 + "km"
                     : post.postDetail.school + "m"}{" "}
-                  away</p>
+                  away
+                </p>
               </div>
             </div>
             <div className="feature">
