@@ -1,5 +1,6 @@
 import prisma from "../lib/prisma.js";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 
 export const getPosts = async (req, res) => {
   const { city, type, property, bedroom, minPrice, maxPrice } = req.query;
@@ -51,7 +52,27 @@ export const getPost = async (req, res) => {
       return res.status(404).json({ message: "Post not found!" });
     }
 
-    res.status(200).json(post);
+    let isSaved = false;
+    const token = req.cookies?.token;
+
+    if (token) {
+      try {
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const saved = await prisma.savedPost.findUnique({
+          where: {
+            userId_postId: {
+              postId: id,
+              userId: payload.id,
+            },
+          },
+        });
+        isSaved = saved ? true : false;
+      } catch (err) {
+        console.error("JWT verification failed:", err);
+      }
+    }
+
+    res.status(200).json({ ...post, isSaved });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Failed to get Post!" });

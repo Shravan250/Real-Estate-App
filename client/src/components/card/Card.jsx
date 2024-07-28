@@ -2,10 +2,12 @@ import { Link } from "react-router-dom";
 import "./card.scss";
 
 function Card({ item }) {
+  const imageSrc = item?.images?.[0] || "/default-image.png";
+
   return (
     <div className="card">
       <Link to={`/${item.id}`} className="imageContainer">
-        <img src={item.images[0]} alt="" />
+        <img src={imageSrc} alt={item.title || "Item Image"} />
       </Link>
       <div className="textContainer">
         <h2 className="title">
