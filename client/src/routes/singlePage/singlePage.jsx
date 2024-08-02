@@ -1,7 +1,6 @@
 import "./singlePage.scss";
 import Slider from "../../components/slider/Slider";
 import Map from "../../components/map/Map";
-import { singlePostData, userData } from "../../lib/dummydata";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { useContext, useState } from "react";
@@ -18,12 +17,22 @@ function SinglePage() {
     if (!currentUser) {
       navigate("/login");
     }
+    // AFTER REACT 19 UPDATE TO USEOPTIMISTIK HOOK
     setSaved((prev) => !prev);
     try {
-      await apiRequest.post("/users/save", { postId: post.id });
-    } catch (e) {
-      console.log(e);
+      const response = await apiRequest.post("/users/save", {
+        postId: post.id,
+      });
+      console.log(response.data);
+    } catch (err) {
+      console.log(err);
       setSaved((prev) => !prev);
+
+      if (err.response && err.response.status === 400) {
+        alert("Post is already saved.");
+      } else {
+        alert("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -150,7 +159,7 @@ function SinglePage() {
               }}
             >
               <img src="/save.png" alt="" />
-              {saved ? "Place Saved" : "Save the Palce"}
+              {saved ? "Place Saved" : "Save the Place"}
             </button>
           </div>
         </div>

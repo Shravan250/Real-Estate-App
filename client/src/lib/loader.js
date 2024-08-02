@@ -19,3 +19,12 @@ export const listPageLoader = async ({ request, params }) => {
     throw error; // Ensure errors are handled in the component
   }
 };
+
+export const profilePageLoader = async ({ request, params }) => {
+  const postPromise = apiRequest("/users/profilePosts");
+  const chatPromise = apiRequest("/chats");
+  return defer({
+    postResponse: postPromise,
+    chatResponse: chatPromise,
+  });
+};
