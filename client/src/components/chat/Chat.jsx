@@ -1,12 +1,14 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./chat.scss";
 import { AuthContext } from "../../context/AuthContext";
 import apiRequest from "../../lib/apiRequest";
 import { format } from "timeago.js";
+import { SocketContext } from "../../context/SocketContext";
 
 function Chat({ chats }) {
   const [chat, setChat] = useState(null);
   const { currentUser } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,19 +17,15 @@ function Chat({ chats }) {
     const text = formData.get("text");
     if (!text) return;
     try {
-      console.log("Chat ID:", chat.id);
-      console.log("Text:", text);
       const res = await apiRequest.post("/messages/" + chat.id, { text });
-      console.log("Response:", res);
       setChat((prev) => ({ ...prev, messages: [...prev.messages, res.data] }));
       e.target.reset();
+      socket.emit("sendMessage", {
+        receiverId: chat.receiver.id,
+        data: res.data,
+      });
     } catch (err) {
-      console.log("Axios Error:", err);
-      if (err.response) {
-        console.log("Response Data:", err.response.data);
-        console.log("Response Status:", err.response.status);
-        console.log("Response Headers:", err.response.headers);
-      }
+      console.log(err);
     }
   };
 
@@ -40,7 +38,28 @@ function Chat({ chats }) {
     }
   };
 
-  console.log(chats);
+  useEffect(() => {
+    const read = async () => {
+      try {
+        await apiRequest.put("/chats/read/" + chat.id);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    if (chat && socket) {
+      socket.on("getMessage", (data) => {
+        if (chat.id === data.chatId) {
+          setChat((prev) => ({ ...prev, messages: [...prev.messages, data] }));
+          read();
+        }
+      });
+    }
+    return () => {
+      socket.off("getMessage");
+    };
+  }, [socket, chat]);
+
   return (
     <div className="chat">
       <div className="messages">
