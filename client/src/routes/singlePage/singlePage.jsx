@@ -23,7 +23,6 @@ function SinglePage() {
       const response = await apiRequest.post("/users/save", {
         postId: post.id,
       });
-      console.log(response.data);
     } catch (err) {
       console.log(err);
       setSaved((prev) => !prev);

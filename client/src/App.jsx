@@ -13,6 +13,8 @@ import {
   profilePageLoader,
   singlePageLoader,
 } from "./lib/loader.js";
+import { AuthContextProvider } from "./context/AuthContext.jsx";
+import { SocketContextProvider } from "./context/SocketContext.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -65,7 +67,13 @@ function App() {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <AuthContextProvider>
+      <SocketContextProvider>
+        <RouterProvider router={router} />
+      </SocketContextProvider>
+    </AuthContextProvider>
+  );
 }
 
 export default App;

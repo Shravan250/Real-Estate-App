@@ -5,10 +5,6 @@ export const addMessages = async (req, res) => {
   const chatId = req.params.chatId;
   const text = req.body.text;
 
-  console.log("Received chatId:", chatId);
-  console.log("Received text:", text);
-  console.log("Received userId:", tokenUserId);
-
   try {
     const chat = await prisma.chat.findUnique({
       where: {
@@ -19,7 +15,6 @@ export const addMessages = async (req, res) => {
     if (!chat) return res.status(404).json({ message: "Chat not found!" });
 
     if (!chat.userIds.includes(tokenUserId)) {
-      console.log(`User ${tokenUserId} not authorized for chat ${chatId}`);
       return res.status(403).json({ message: "Unauthorized action!" });
     }
 

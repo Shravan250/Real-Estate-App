@@ -22,7 +22,6 @@ function ProfileUpdatePage() {
         password,
         avatar: avatar[0],
       });
-      console.log(res.data);
       updateUser(res.data);
     } catch (err) {
       console.log(err);
